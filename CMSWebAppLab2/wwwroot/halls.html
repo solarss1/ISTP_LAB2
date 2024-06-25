@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Зали</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-4">Зали</h1>
+        <form id="hallForm" class="mb-4">
+            <input type="hidden" id="hallId">
+            <div class="form-group">
+                <label for="hallCinemaId">Кінотеатр:</label>
+                <select class="form-control" id="hallCinemaId" required>
+                    <!-- Cinema options will be populated here -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="hallName">Назва Залу:</label>
+                <input type="text" class="form-control" id="hallName" required>
+            </div>
+            <div class="form-group">
+                <label for="hallMaxPlaces">Максимальна Кількість Місць:</label>
+                <input type="number" class="form-control" id="hallMaxPlaces" required>
+            </div>
+            <button id="submitButton" type="submit" class="btn btn-primary">Зберегти</button>
+        </form>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Кінотеатр</th>
+                    <th>Назва Залу</th>
+                    <th>Максимальна Кількість Місць</th>
+                    <th>Дії</th>
+                </tr>
+            </thead>
+            <tbody id="hallList">
+                <!-- Hall records will be added here -->
+            </tbody>
+        </table>
+        <a href="index.html" class="btn btn-primary">На Головну</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        const hallApiUrl = '/api/Halls';
+        const cinemaApiUrl = '/api/Cinemas';
+        const halls = [];
+        const cinemas = [];
+
+        function renderHalls() {
+            const hallList = $('#hallList');
+            hallList.empty();
+
+            halls.forEach((hall, index) => {
+                const cinema = cinemas.find(c => c.id === hall.cinemaId);
+                hallList.append(`
+                        <tr>
+                            <td>${hall.id}</td>
+                            <td>${cinema ? cinema.cinemaName : 'Unknown'}</td>
+                            <td>${hall.hallName}</td>
+                            <td>${hall.maxPlaces}</td>
+                            <td>
+                                <button class="btn btn-sm btn-warning" onclick="editHall(${index})">Редагувати</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteHall(${index})">Видалити</button>
+                            </td>
+                        </tr>
+                    `);
+            });
+        }
+
+        function renderCinemaOptions() {
+            const hallCinemaId = $('#hallCinemaId');
+            hallCinemaId.empty();
+            cinemas.forEach(cinema => {
+                hallCinemaId.append(`<option value="${cinema.id}">${cinema.cinemaName}</option>`);
+            });
+        }
+
+        function fetchHalls() {
+            $.get(hallApiUrl, function (data) {
+                halls.length = 0;
+                data.forEach(hall => halls.push(hall));
+                renderHalls();
+            });
+        }
+
+        function fetchCinemas() {
+            $.get(cinemaApiUrl, function (data) {
+                cinemas.length = 0;
+                data.forEach(cinema => cinemas.push(cinema));
+                renderCinemaOptions();
+                fetchHalls();  // Fetch halls after cinemas are fetched to ensure cinema names are available
+            });
+        }
+
+        function addHall(hall) {
+            $.ajax({
+                url: hallApiUrl,
+                type: 'POST',
+                data: JSON.stringify(hall),
+                contentType: 'application/json',
+                success: function (data) {
+                    halls.push(data);
+                    renderHalls();
+                }
+            });
+        }
+
+        function updateHall(index, hall) {
+            hall["id"] = halls[index].id;
+            $.ajax({
+                url: `${hallApiUrl}/${halls[index].id}`,
+                type: 'PUT',
+                data: JSON.stringify(hall),
+                contentType: 'application/json',
+                success: function (data) {
+                    halls[index] = hall;
+                    renderHalls();
+                }
+            });
+        }
+
+        function deleteHall(index) {
+            $.ajax({
+                url: `${hallApiUrl}/${halls[index].id}`,
+                type: 'DELETE',
+                success: function () {
+                    halls.splice(index, 1);
+                    renderHalls();
+                }
+            });
+        }
+
+        function editHall(index) {
+            const hall = halls[index];
+            $('#hallId').val(index);
+            $('#hallCinemaId').val(hall.cinemaId);
+            $('#hallName').val(hall.hallName);
+            $('#hallMaxPlaces').val(hall.maxPlaces);
+        }
+
+        $(document).ready(function () {
+            $('#submitButton').on('click', function (event) {
+                event.preventDefault();
+
+                const hall = {
+                    cinemaId: $('#hallCinemaId').val(),
+                    hallName: $('#hallName').val(),
+                    maxPlaces: $('#hallMaxPlaces').val()
+                };
+
+                const hallId = $('#hallId').val();
+
+                if (hallId === "") {
+                    addHall(hall);
+                } else {
+                    updateHall(hallId, hall);
+                    $('#hallId').val('');
+                }
+
+                $('#hallForm')[0].reset();
+            });
+
+            fetchCinemas();
+        });
+    </script>
+</body>
+</html>

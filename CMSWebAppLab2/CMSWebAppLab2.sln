@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34322.80
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMSWebAppLab2", "CMSWebAppLab2.csproj", "{CF947BAB-6407-43EA-9861-7B1302D78C92}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CF947BAB-6407-43EA-9861-7B1302D78C92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF947BAB-6407-43EA-9861-7B1302D78C92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF947BAB-6407-43EA-9861-7B1302D78C92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF947BAB-6407-43EA-9861-7B1302D78C92}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E288E16C-D457-4218-A13B-5036A24847F8}
+	EndGlobalSection
+EndGlobal

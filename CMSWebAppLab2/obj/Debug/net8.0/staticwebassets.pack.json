@@ -1,0 +1,25 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\bohdanbobyl\\source\\repos\\CMSWebAppLab2\\wwwroot\\index.html",
+      "PackagePath": "staticwebassets\\index.html"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.CMSWebAppLab2.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.CMSWebAppLab2.props",
+      "PackagePath": "build\\CMSWebAppLab2.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.CMSWebAppLab2.props",
+      "PackagePath": "buildMultiTargeting\\CMSWebAppLab2.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.CMSWebAppLab2.props",
+      "PackagePath": "buildTransitive\\CMSWebAppLab2.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

@@ -1,0 +1,6 @@
+@CMSWebAppLab2_HostAddress = http://localhost:5195
+
+GET {{CMSWebAppLab2_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

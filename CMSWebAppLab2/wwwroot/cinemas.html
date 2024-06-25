@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кінотеатри</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-4">Кінотеатри</h1>
+        <form id="cinemaForm" class="mb-4">
+            <input type="hidden" id="cinemaId">
+            <div class="form-group">
+                <label for="cinemaName">Назва:</label>
+                <input type="text" class="form-control" id="cinemaName" required>
+            </div>
+            <div class="form-group">
+                <label for="cinemaAddress">Адреса:</label>
+                <input type="text" class="form-control" id="cinemaAddress" required>
+            </div>
+            <button id="submitButton" type="submit" class="btn btn-primary">Зберегти</button>
+        </form>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Назва</th>
+                    <th>Адреса</th>
+                    <th>Дії</th>
+                </tr>
+            </thead>
+            <tbody id="cinemaList">
+                <!-- Cinema records will be added here -->
+            </tbody>
+        </table>
+        <a href="index.html" class="btn btn-primary">На Головну</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        const apiUrl = '/api/Cinemas';
+        const cinemas = [];
+
+        function renderCinemas() {
+            const cinemaList = $('#cinemaList');
+            cinemaList.empty();
+
+            cinemas.forEach((cinema, index) => {
+                cinemaList.append(`
+                        <tr>
+                            <td>${cinema.id}</td>
+                            <td>${cinema.cinemaName}</td>
+                            <td>${cinema.address}</td>
+                            <td>
+                                <button class="btn btn-sm btn-warning" onclick="editCinema(${index})">Редагувати</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteCinema(${index})">Видалити</button>
+                            </td>
+                        </tr>
+                    `);
+            });
+        }
+
+        function fetchCinemas() {
+            $.get(apiUrl, function (data) {
+                cinemas.length = 0;
+                data.forEach(cinema => cinemas.push(cinema));
+                renderCinemas();
+            });
+        }
+
+        function addCinema(cinema) {
+            $.ajax(
+                {
+                    url: apiUrl,
+                    type: 'POST',
+                    data: JSON.stringify(cinema),
+                    contentType: 'application/json',
+                    success: function(data) {
+                        cinemas.push(data);
+                        renderCinemas();
+                    }
+                }
+            );
+        }
+
+        function updateCinema(index, cinema) {
+            cinema["id"] = cinemas[index].id
+            $.ajax({
+                url: `${apiUrl}/${cinemas[index].id}`,
+                type: 'PUT',
+                data: JSON.stringify(cinema),
+                contentType: 'application/json',
+                success: function (data) {
+                    cinemas[index] = cinema;
+                    renderCinemas();
+                }
+            });
+        }
+
+        function deleteCinema(index) {
+            $.ajax({
+                url: `${apiUrl}/${cinemas[index].id}`,
+                type: 'DELETE',
+                success: function () {
+                    cinemas.splice(index, 1);
+                    renderCinemas();
+                }
+            });
+        }
+
+        function editCinema(index) {
+            const cinema = cinemas[index];
+            $('#cinemaId').val(index);
+            $('#cinemaName').val(cinema.cinemaName);
+            $('#cinemaAddress').val(cinema.address);
+        }
+
+        $(document).ready(function () {
+            $('#submitButton').on('click', function (event) {
+                event.preventDefault();
+
+                const cinema = {
+                    cinemaName: $('#cinemaName').val(),
+                    address: $('#cinemaAddress').val()
+                };
+
+                const cinemaId = $('#cinemaId').val();
+
+                if (cinemaId === "") {
+                    addCinema(cinema);
+                } else {
+                    updateCinema(cinemaId, cinema);
+                    $('#cinemaId').val('');
+                }
+
+                $('#cinemaForm')[0].reset();
+            });
+
+            fetchCinemas();
+        });
+    </script>
+</body>
+</html>
